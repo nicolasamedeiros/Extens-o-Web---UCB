@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculo de Médias</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Calculo de Médias</h1>
+    <form action="/adicionar-aluno" method="POST">
+        <label for="nome">Nome do Aluno:</label>
+        <input type="text" id="nome" name="nome" required><br>
+        <label for="nota1">Nota 1:</label>
+        <input type="number" id="nota1" name="nota1" min="0" max="10" step="0.1" required><br>
+        <label for="nota2">Nota 2:</label>
+        <input type="number" id="nota2" name="nota2" min="0" max="10" step="0.1" required><br>
+        <button type="submit">Adicionar Aluno</button>
+    </form>
+    <h2>Alunos Cadastrados:</h2>
+    <ul id="alunos"></ul>
+    <h2>Média do Aluno com Maior Nota: <span id="mediaMaiorNota"></span></h2>
+    <h2>Média da Turma: <span id="mediaTurma"></span></h2>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('form').submit(function(e) {
+                e.preventDefault();
+                $.post($(this).attr('action'), $(this).serialize(), function(data) {
+                    $('#mediaMaiorNota').text(data.alunoMaiorNota.media.toFixed(2));
+                    $('#mediaTurma').text(data.mediaTurma.toFixed(2));
+                    $('#alunos').empty();
+                    data.alunos.forEach(function(aluno) {
+                        $('#alunos').append(`<li>${aluno.nome} - Nota 1: ${aluno.nota1} - Nota 2: ${aluno.nota2} - Média: ${aluno.media.toFixed(2)}</li>`);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
