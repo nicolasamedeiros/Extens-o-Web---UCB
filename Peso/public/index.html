@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Pets</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Cadastro de Pets</h1>
+    <form action="/cadastrar" method="POST">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required><br>
+        <label for="idade">Idade (em anos):</label>
+        <input type="number" id="idade" name="idade" required><br>
+        <label for="peso">Peso (em kg):</label>
+        <input type="number" id="peso" name="peso" step="0.01" required><br>
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <h2>Pets Cadastrados</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Peso</th>
+                <th>Porte Estimado</th>
+            </tr>
+        </thead>
+        <tbody id="pets-list">
+        </tbody>
+    </table>
+
+    <script>
+        fetch('/lista')
+            .then(response => response.json())
+            .then(pets => {
+                const petsList = document.getElementById('pets-list');
+                pets.forEach(pet => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${pet.nome}</td>
+                        <td>${pet.idade}</td>
+                        <td>${pet.peso}</td>
+                        <td>${pet.porte}</td>
+                    `;
+                    petsList.appendChild(tr);
+                });
+            });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.cookie.includes('clearData=true')) {
+                fetch('/limpar', { method: 'GET' })
+                    .then(() => {
+                        document.cookie = 'clearData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    })
+                    .catch(error => console.error('Erro ao limpar dados:', error));
+            }
+        });
+    </script>
+</body>
+</html>
